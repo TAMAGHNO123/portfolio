@@ -9,31 +9,36 @@ import Target from "../components/Target";
 import ReactLogo from '../components/ReactLogo';
 
 const calculateSizes = (isMobile, isSmall, isTablet) => {
-  const targetPosition = [-8.5, -10, 15]; // Move left (negative X), down (negative Y), Z remains the same
+  const targetPosition = [-6, -10, 15]; // Adjust as needed
+  const reactLogoPosition = [8, 6, 15]; // Adjust as needed
 
   if (isMobile) {
     return {
       deskScale: 0.07,
       desktop: { position: [1.7, -6, 10.0] },
       targetPosition,
+      ReactLogo: { position: reactLogoPosition },
     };
   } else if (isTablet) {
     return {
       deskScale: 0.09,
       desktop: { position: [1.7, -6, 10.0] },
       targetPosition,
+      ReactLogo: { position: reactLogoPosition },
     };
   } else if (isSmall) {
     return {
       deskScale: 0.05,
       desktop: { position: [1.7, -6, 10.0] },
       targetPosition,
+      ReactLogo: { position: reactLogoPosition },
     };
   } else {
     return {
       deskScale: 0.1,
       desktop: { position: [1.7, -6, 10.0] },
       targetPosition,
+      ReactLogo: { position: reactLogoPosition },
     };
   }
 };
