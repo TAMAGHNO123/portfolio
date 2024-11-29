@@ -1,13 +1,12 @@
 import React, { useRef } from 'react'
-import { useGLTF } from '@react-three/drei'
+import { Float,useGLTF } from '@react-three/drei'
  function ReactLogo(props) {
     const { nodes, materials } = useGLTF('/models/react.glb')
     return (
-        <group {...props} dispose={null}>
-            <group scale={0.01}>
+        <Float  floatIntensity={1}>
+            <group position={[8,8,0]} scale={0.014} {...props}>
                 <mesh
-                    castShadow
-                    receiveShadow
+                    
                     geometry={nodes['React-Logo_Material002_0'].geometry}
                     material={materials['Material.002']}
                     position={[0, 7.935, 18.102]}
@@ -15,7 +14,7 @@ import { useGLTF } from '@react-three/drei'
                     scale={[39.166, 39.166, 52.734]}
                 />
             </group>
-        </group>
+        </Float>
     )
 }
 useGLTF.preload('/models/react.glb')
