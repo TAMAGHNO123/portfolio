@@ -13,7 +13,7 @@ import HeroCamera from '../components/HeroCamera';
 import Button from '../components/Button';
 
 const calculateSizes = (isMobile, isSmall, isTablet) => {
-  const targetPosition = [-16, -10, 15]; // Adjust as needed
+  const targetPosition = [-18, -10, 15]; // Adjust as needed
   const reactLogoPosition = [16, 6, 15]; // Adjust as needed
 
   if (isMobile) {
@@ -72,19 +72,19 @@ const Hero = () => {
             <HeroCamera isMobile={isMobile}>
 
               <HackerRoom
-                scale={sizes.deskScale}
-                position={sizes.desktop.position}
+                scale={0.128}
+                position={[0,-5,1]}
                 rotation={[0.4, 210.4, 0]}
               />
             </HeroCamera>
             <group>
               <Target position={sizes.targetPosition} />
-              <ReactLogo position={sizes.ReactLogo.position} />
+              <ReactLogo position={[24,9, 8]} />
               <Cube position={[23, -8, 5]} />
               <Rings position={[-55, 15, 7]} />
             </group>
             <ambientLight intensity={1} />
-            <directionalLight position={[10, 10, 10]} intensity={3} />
+            <directionalLight position={[10, 15, 10]} intensity={3} />
           </Suspense>
         </Canvas>
       </div>
