@@ -72,15 +72,15 @@ const Hero = () => {
             <HeroCamera isMobile={isMobile}>
 
               <HackerRoom
-                scale={0.128}
-                position={[0,-5,1]}
+                scale={0.129}
+                position={[0,-6,1]}
                 rotation={[0.4, 210.4, 0]}
               />
             </HeroCamera>
             <group>
               <Target position={sizes.targetPosition} />
               <ReactLogo position={[24,9, 8]} />
-              <Cube position={[23, -8, 5]} />
+              <Cube position={[22, -8, 5]} scale={2.2}/>
               <Rings position={[-55, 15, 7]} />
             </group>
             <ambientLight intensity={1} />
