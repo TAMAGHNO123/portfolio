@@ -1,84 +1,139 @@
-import React, { useState } from 'react';
-import Globe from 'react-globe.gl';
-import Button from '../components/Button';
+import React from 'react';
+import { User, CheckCircle2, Code2, Layout, Server, Database, Cpu } from 'lucide-react';
 
 const About = () => {
-    const [hasCopied, setHasCopied] = useState(false);
-    const handleCopy = () => {
-        navigator.clipboard.writeText('tamaghnog@gmail.com');
-        setHasCopied(true);
-        setTimeout(() => {
-            setHasCopied(false);
-        }, 2000);
-    };
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+  };
 
+  const coreAttributes = [
+    'Problem Solving (DSA)',
+    'Backend Architecture Thinking',
+    'Efficient Debugging & Testing',
+    'Team Collaboration & Version Control'
+  ];
 
-    const handleScrollToContact = () => {
-        document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-    };
+  const skillGroups = [
+    {
+      title: 'Languages',
+      icon: <Code2 size={20} className="text-violet-500" />,
+      skills: ['JavaScript', 'C++', 'SQL']
+    },
+    {
+      title: 'Frontend',
+      icon: <Layout size={20} className="text-violet-500" />,
+      skills: ['React (Vite)', 'Next.js', 'Tailwind CSS']
+    },
+    {
+      title: 'Backend & APIs',
+      icon: <Server size={20} className="text-violet-500" />,
+      skills: ['Node.js', 'Express.js', 'REST APIs']
+    },
+    {
+      title: 'Databases & Services',
+      icon: <Database size={20} className="text-violet-500" />,
+      skills: ['MongoDB', 'PostgreSQL', 'Firestore', 'Supabase']
+    },
+    {
+      title: 'Tools & Cloud',
+      icon: <Cpu size={20} className="text-violet-500" />,
+      skills: ['Git', 'GitHub', 'Firebase', 'Google Cloud Platform']
+    }
+  ];
 
-    return (
-        <section className='c-space my-20' id='about'>
-            <div className='grid xl:grid-cols-3 xl:grid-rows-3 md:grid-cols-2 grid-cols-1 gap-5'>
-                {/* First row: Introduction, Tech Stack, Remote Work side by side */}
-                <div className='col-span-1 xl:row-span-1 order-1'>
-                    <div className='grid-container'>
-                        <img src='/assets/grid1.png' alt='grid-1' className='w-full sm:h-[180px] h-fit object-contain' />
-                        <div>
-                            <p className='grid-headtext'>Hi, I am Tamaghno</p>
-                            <p className='grid-subtext'>As an individual I design and optimize websites and develop scalable, user-friendly applications...eager to collaborate and contribute.</p>
-                        </div>
-                    </div>
-                </div>
+  return (
+    <section id="about" className="section-padding select-none">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Section Title */}
+        <div className="mb-16 text-center">
+          <h2 className="font-plus-jakarta text-4xl font-bold tracking-tight mb-3 section-text-gradient">
+            About Me
+          </h2>
+          <p className="text-base sm:text-lg text-slate-400 max-w-[600px] mx-auto">
+            My background, technical strengths, and toolkit
+          </p>
+        </div>
 
-                <div className='col-span-1 xl:row-span-1 order-2'>
-                    <div className='grid-container'>
-                        <img src='/assets/grid2.png' alt='grid-2' className='w-full sm:h-[180px] h-fit object-contain' />
-                        <div>
-                            <p className='grid-headtext'>Tech Stack</p>
-                            <p className='grid-subtext'>I have experience working with a range of technologies including React, Node.js, Express, MongoDB, and more.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className='col-span-1 xl:row-span-1 order-3'>
-                    <div className='grid-container'>
-                        <div>
-                            <p className='grid-headtext'>I work remotely</p>
-                            <p className='grid-subtext'>I'm based in India with remote work available across most timezones.</p>
-                            <Button name={'Contact Me'} isBeam containerClass='w-full mt-8'/>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Second row: Coding Passion and Contact */}
-                <div className='xl:col-span-2 xl:row-span-1 order-4'>
-                    <div className='grid-container'>
-                        <img src='/assets/grid3.png' alt='grid-3' className='w-full sm:h-[180px] h-fit object-contain' />
-                        <div>
-                            <p className='grid-headtext'>My passion for coding</p>
-                            <p className='grid-subtext'>I love solving problems and building things through code</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className='xl:col-span-1 xl:row-span-1 order-5'>
-                    <div className='grid-container'>
-                        <img src='/assets/grid4.png' alt='grid-4' className='w-full md:h-[120px] h-fit object-cover sm:object-top' />
-                        <div className='space-y-2'>
-                        <p className='grid-subtext text-center cursor-pointer' onClick={handleScrollToContact}>Contact Me</p>
-                            <div className='copy-container' onClick={handleCopy}>
-                                <img src={hasCopied ? 'assets/tick.svg' : 'assets/copy.svg'} alt='copy' />
-                                <p className='lg:text-2xl md:text-xl font-medium text-gray_gradient text-white'>
-                                    tamaghnog@gmail.com
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        {/* Layout Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Intro Card */}
+          <div
+            onMouseMove={handleMouseMove}
+            className="glass-card group relative lg:col-span-5 p-8 sm:p-10 rounded-3xl flex flex-col gap-6"
+          >
+            <div className="card-glow"></div>
+            
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-violet-500/10 to-cyan-500/10 border border-violet-500/20 flex items-center justify-center">
+              <User size={26} className="text-violet-500" />
             </div>
-        </section>
-    );
+
+            <h3 className="font-plus-jakarta text-2xl font-bold text-white tracking-tight">
+              Engineering the Future
+            </h3>
+            
+            <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+              I am a final-year Computer Science Engineering student dedicated to mastering modern software engineering principles. My expertise lies in architecting fast, secure backend APIs and building visually stunning, accessible frontend interfaces.
+            </p>
+            
+            <p className="text-slate-400 text-sm sm:text-base leading-relaxed">
+              With a strong foundation in database design, caching, system design, and algorithmic problem solving, I thrive on engineering elegant solutions to complex technical challenges.
+            </p>
+
+            <div className="border-t border-white/8 pt-6 mt-2">
+              <h4 className="text-white font-semibold mb-4 text-sm sm:text-base">Core Attributes</h4>
+              <ul className="flex flex-col gap-3">
+                {coreAttributes.map((attr) => (
+                  <li key={attr} className="flex items-center gap-3 text-slate-400 text-sm sm:text-base">
+                    <CheckCircle2 size={18} className="text-cyan-500 flex-shrink-0" />
+                    {attr}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Skills Grid */}
+          <div className="lg:col-span-7 flex flex-col gap-6">
+            <h3 className="font-plus-jakarta text-2xl font-bold text-white tracking-tight mb-2">
+              Technical Arsenal
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {skillGroups.map((group) => (
+                <div
+                  key={group.title}
+                  onMouseMove={handleMouseMove}
+                  className="glass-card group relative p-6 rounded-2xl flex flex-col gap-4"
+                >
+                  <div className="card-glow"></div>
+
+                  <h4 className="flex items-center gap-2.5 text-white font-bold text-base sm:text-lg">
+                    {group.icon}
+                    {group.title}
+                  </h4>
+
+                  <div className="flex flex-wrap gap-2">
+                    {group.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-400 border border-white/5 bg-white/2 hover:bg-violet-500/15 hover:border-violet-500/40 hover:text-white hover:-translate-y-0.5 transition-all duration-300 cursor-default"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default About;
