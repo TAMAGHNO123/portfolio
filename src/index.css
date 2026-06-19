@@ -190,6 +190,55 @@ body {
   z-index: 2;
 }
 
+.glass-card p {
+  line-height: 1.72 !important;
+}
+
+/* Glass inputs and textareas */
+.glass-input {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  transition: all 0.3s ease !important;
+}
+
+.glass-input:focus {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 12px var(--primary-glow) !important;
+}
+
+/* Premium Button Hover & Glow Border */
+.btn-hover-premium {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn-hover-premium::after {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.btn-hover-premium:hover::after {
+  opacity: 1;
+}
+
+.btn-hover-premium:hover {
+  box-shadow: 0 0 25px var(--primary-glow);
+  transform: translateY(-2px) scale(1.02);
+}
+
 /* ==========================================================================
    Helper Utilities
    ========================================================================== */
@@ -269,4 +318,9 @@ body {
 .reveal-active {
   opacity: 1 !important;
   transform: translate3d(0, 0, 0) !important;
+}
+
+/* Custom Typography Utilities */
+.font-plus-jakarta {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif !important;
 }

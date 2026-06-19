@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Phone, Copy, Check, Send, Loader } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+import { audioSystem } from '../utils/audioSystem';
 
 const Contact = () => {
   const [copiedEmail, setCopiedEmail] = useState(false);
@@ -8,16 +10,40 @@ const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
+  const [showToast, setShowToast] = useState(false);
+
+  useEffect(() => {
+    // Initialize EmailJS with your Public Key
+    emailjs.init("34q4YlVsldG2z5aqk");
+  }, []);
 
   const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
-    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+    
+    card.style.setProperty('--mouse-x', `${x}px`);
+    card.style.setProperty('--mouse-y', `${y}px`);
+    
+    const w = rect.width;
+    const h = rect.height;
+    // Subtle tilt for this larger container
+    const rotateY = ((x - w / 2) / (w / 2)) * 6; // max 6 deg
+    const rotateX = -((y - h / 2) / (h / 2)) * 6;
+    
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+    card.style.transition = 'transform 0.08s ease-out';
+  };
+
+  const handleMouseLeave = (e) => {
+    const card = e.currentTarget;
+    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
+    card.style.transition = 'transform 0.4s ease-out';
   };
 
   const handleCopy = async (text, type) => {
+    audioSystem.playClick();
     try {
       await navigator.clipboard.writeText(text);
       if (type === 'email') {
@@ -32,22 +58,45 @@ const Contact = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    audioSystem.playClick();
     setIsSubmitting(true);
     setSubmitStatus(null);
+    setShowToast(false);
 
-    // Simulate sending latency
-    setTimeout(() => {
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      message: formData.message,
+      to_name: 'Tamaghno',
+    };
+
+    try {
+      const response = await emailjs.send(
+        'service_i4jdu1c', // Service ID
+        'template_kee7t2j', // Template ID 
+        templateParams,
+        '34q4YlVsldG2z5aqk' // Public Key
+      );
+
+      if (response.status === 200) {
+        setIsSubmitting(false);
+        setSubmitStatus('success');
+        setShowToast(true);
+        setFormData({ name: '', email: '', message: '' });
+
+        setTimeout(() => {
+          setShowToast(false);
+          setSubmitStatus(null);
+        }, 4000);
+      }
+    } catch (error) {
+      console.error('Email error:', error);
       setIsSubmitting(false);
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', message: '' });
-
-      // Clear success banner after 5s
-      setTimeout(() => {
-        setSubmitStatus(null);
-      }, 5000);
-    }, 1800);
+      setSubmitStatus('error');
+      alert('Failed to send message. Please try again.');
+    }
   };
 
   return (
@@ -55,7 +104,9 @@ const Contact = () => {
       <div className="max-w-7xl mx-auto px-6">
         <div
           onMouseMove={handleMouseMove}
-          className="contact-container-glow glass-card group relative p-8 sm:p-14 rounded-3xl max-w-[900px] mx-auto"
+          onMouseLeave={handleMouseLeave}
+          onMouseEnter={() => audioSystem.playHover()}
+          className="contact-container-glow glass-card group relative p-8 sm:p-14 rounded-3xl max-w-[900px] mx-auto cursor-default"
         >
           <div className="contact-glow"></div>
 
@@ -74,7 +125,8 @@ const Contact = () => {
             {/* Email Card */}
             <div
               onClick={() => handleCopy('tamaghnog@gmail.com', 'email')}
-              className="flex items-center gap-5 p-5 rounded-2xl bg-white/2 border border-white/5 hover:bg-white/5 hover:border-cyan-500 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)] -translate-y-0.5 hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+              onMouseEnter={() => audioSystem.playHover()}
+              className="flex items-center gap-5 p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-cyan-500 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)] -translate-y-0.5 hover:-translate-y-1 transition-all duration-300 cursor-pointer"
             >
               <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-violet-500/10 to-cyan-500/10 border border-violet-500/20 flex items-center justify-center text-violet-500">
                 <Mail size={22} />
@@ -98,7 +150,8 @@ const Contact = () => {
             {/* Phone Card */}
             <div
               onClick={() => handleCopy('+918420269984', 'phone')}
-              className="flex items-center gap-5 p-5 rounded-2xl bg-white/2 border border-white/5 hover:bg-white/5 hover:border-cyan-500 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)] -translate-y-0.5 hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+              onMouseEnter={() => audioSystem.playHover()}
+              className="flex items-center gap-5 p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-cyan-500 hover:shadow-[0_0_15px_rgba(6,182,212,0.15)] -translate-y-0.5 hover:-translate-y-1 transition-all duration-300 cursor-pointer"
             >
               <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-violet-500/10 to-cyan-500/10 border border-violet-500/20 flex items-center justify-center text-violet-500">
                 <Phone size={22} />
@@ -134,7 +187,8 @@ const Contact = () => {
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Your Name"
                   required
-                  className="w-full bg-white/2 border border-white/5 focus:border-violet-500 focus:bg-white/4 rounded-xl px-4 py-3 text-sm sm:text-base text-white outline-none focus:shadow-[0_0_10px_rgba(139,92,246,0.3)] transition-all duration-300"
+                  onFocus={() => audioSystem.playClick()}
+                  className="w-full glass-input rounded-xl px-4 py-3 text-sm sm:text-base placeholder-slate-400/80 outline-none"
                 />
               </div>
               <div className="flex flex-col gap-2 text-left">
@@ -148,7 +202,8 @@ const Contact = () => {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="Your Email"
                   required
-                  className="w-full bg-white/2 border border-white/5 focus:border-violet-500 focus:bg-white/4 rounded-xl px-4 py-3 text-sm sm:text-base text-white outline-none focus:shadow-[0_0_10px_rgba(139,92,246,0.3)] transition-all duration-300"
+                  onFocus={() => audioSystem.playClick()}
+                  className="w-full glass-input rounded-xl px-4 py-3 text-sm sm:text-base placeholder-slate-400/80 outline-none"
                 />
               </div>
             </div>
@@ -164,14 +219,16 @@ const Contact = () => {
                 rows="5"
                 placeholder="Your Message..."
                 required
-                className="w-full bg-white/2 border border-white/5 focus:border-violet-500 focus:bg-white/4 rounded-xl px-4 py-3 text-sm sm:text-base text-white outline-none focus:shadow-[0_0_10px_rgba(139,92,246,0.3)] transition-all duration-300 resize-none"
+                onFocus={() => audioSystem.playClick()}
+                className="w-full glass-input rounded-xl px-4 py-3 text-sm sm:text-base placeholder-slate-400/80 outline-none resize-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="self-center flex items-center gap-2 px-8 py-3.5 rounded-2xl font-semibold text-white bg-gradient-to-r from-violet-500 to-cyan-500 hover:shadow-[0_0_25px_rgba(139,92,246,0.5)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              onMouseEnter={() => audioSystem.playHover()}
+              className="self-center flex items-center gap-2 px-8 py-3.5 rounded-2xl font-semibold text-white bg-gradient-to-r from-violet-500 to-cyan-500 btn-hover-premium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <>
@@ -190,6 +247,21 @@ const Contact = () => {
               </div>
             )}
           </form>
+        </div>
+      </div>
+
+      {/* Floating Toast Notification */}
+      <div className={`fixed bottom-8 right-8 z-50 transition-all duration-500 ease-out transform ${
+        showToast ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-10 opacity-0 scale-95 pointer-events-none'
+      }`}>
+        <div className="glass-card flex items-center gap-3.5 px-6 py-4.5 rounded-2xl border border-green-500/30 bg-green-950/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(74,222,128,0.15)] max-w-sm">
+          <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 flex-shrink-0">
+            <Check size={18} />
+          </div>
+          <div className="flex flex-col text-left">
+            <h5 className="text-white font-bold text-sm">Message Sent!</h5>
+            <p className="text-slate-300 text-xs mt-0.5">Thank you, Tamaghno will get back to you soon.</p>
+          </div>
         </div>
       </div>
     </section>

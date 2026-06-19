@@ -1,12 +1,29 @@
 import React from 'react';
+import { audioSystem } from '../utils/audioSystem';
 
 const Experience = () => {
   const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
-    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+    
+    card.style.setProperty('--mouse-x', `${x}px`);
+    card.style.setProperty('--mouse-y', `${y}px`);
+    
+    const w = rect.width;
+    const h = rect.height;
+    const rotateY = ((x - w / 2) / (w / 2)) * 10; // slightly gentler tilt for timeline
+    const rotateX = -((y - h / 2) / (h / 2)) * 10;
+    
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
+    card.style.transition = 'transform 0.08s ease-out';
+  };
+
+  const handleMouseLeave = (e) => {
+    const card = e.currentTarget;
+    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
+    card.style.transition = 'transform 0.4s ease-out';
   };
 
   const timelineEvents = [
@@ -90,7 +107,7 @@ const Experience = () => {
             {timelineEvents.map((item, idx) => (
               <div
                 key={idx}
-                className={`relative w-full md:w-1/2 px-0 md:px-10 mb-0 md:mb-10 last:mb-0 flex flex-col ${
+                className={`relative w-full md:w-1/2 px-0 md:px-14 mb-0 md:mb-10 last:mb-0 flex flex-col ${
                   item.side === 'left'
                     ? 'md:left-0 md:items-end md:text-right'
                     : 'md:left-1/2 md:items-start md:text-left'
@@ -111,7 +128,10 @@ const Experience = () => {
                 {/* Card Container */}
                 <div
                   onMouseMove={handleMouseMove}
-                  className="glass-card group relative p-6 sm:p-8 rounded-3xl w-full max-w-[480px] pl-[54px] pr-6 md:px-8"
+                  onMouseLeave={handleMouseLeave}
+                  onMouseEnter={() => audioSystem.playHover()}
+                  onClick={() => audioSystem.playClick()}
+                  className="glass-card group relative p-6 sm:p-8 rounded-3xl w-full max-w-[480px] pl-[54px] pr-6 md:px-8 cursor-default"
                 >
                   <div className="card-glow"></div>
 
@@ -156,6 +176,7 @@ const Experience = () => {
                         {item.coursework.map((course) => (
                           <span
                             key={course}
+                            onMouseEnter={() => audioSystem.playHover()}
                             className="px-2.5 py-1 rounded bg-white/2 border border-white/5 text-[10px] sm:text-xs font-semibold text-slate-400"
                           >
                             {course}

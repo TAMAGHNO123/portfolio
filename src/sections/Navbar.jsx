@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Volume2, VolumeX } from 'lucide-react';
+import { audioSystem } from '../utils/audioSystem';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState('hero');
+  const [isMuted, setIsMuted] = useState(audioSystem.getMuteState());
 
   const navLinks = [
     { name: 'Home', href: '#hero', id: 'hero' },
@@ -32,7 +34,7 @@ const Navbar = () => {
     const sections = document.querySelectorAll('section');
     const observerOptions = {
       root: null,
-      rootMargin: '-50% 0px -50% 0px',
+      rootMargin: '-30% 0px -30% 0px',
       threshold: 0
     };
 
@@ -50,12 +52,27 @@ const Navbar = () => {
     };
   }, []);
 
+  const handleSoundToggle = () => {
+    const nextMuteState = audioSystem.toggleMute();
+    setIsMuted(nextMuteState);
+  };
+
+  const handleLinkClick = () => {
+    audioSystem.playClick();
+    setIsMenuOpen(false);
+  };
+
   return (
     <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 backdrop-blur-md border-b border-white/8 ${
       isScrolled ? 'h-[65px] bg-[#070913]/85' : 'h-[75px] bg-[#070913]/65'
     }`}>
       <div className="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
-        <a href="#" className="font-plus-jakarta text-2xl font-extrabold text-white flex items-center gap-2 tracking-tight">
+        <a 
+          href="#" 
+          onClick={handleLinkClick}
+          onMouseEnter={() => audioSystem.playHover()}
+          className="font-plus-jakarta text-2xl font-extrabold text-white flex items-center gap-2 tracking-tight select-none"
+        >
           <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 shadow-[0_0_10px_#8b5cf6]"></span>
           Tamaghno
         </a>
@@ -67,6 +84,8 @@ const Navbar = () => {
               <li key={link.name}>
                 <a
                   href={link.href}
+                  onClick={handleLinkClick}
+                  onMouseEnter={() => audioSystem.playHover()}
                   className={`relative py-2 text-sm font-medium transition-colors hover:text-white ${
                     activeSection === link.id ? 'text-white' : 'text-slate-400'
                   }`}
@@ -83,15 +102,31 @@ const Navbar = () => {
 
         {/* Action Button & Mobile Toggle */}
         <div className="flex items-center gap-4">
+          {/* Mute Toggle Button */}
+          <button
+            onClick={handleSoundToggle}
+            onMouseEnter={() => audioSystem.playHover()}
+            className="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 bg-white/3 text-slate-400 hover:text-white hover:border-violet-500/50 hover:shadow-[0_0_10px_rgba(139,92,246,0.2)] transition-all duration-300"
+            aria-label={isMuted ? 'Unmute system' : 'Mute system'}
+          >
+            {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} className="animate-pulse" />}
+          </button>
+
           <a
             href="#contact"
+            onClick={handleLinkClick}
+            onMouseEnter={() => audioSystem.playHover()}
             className="hidden sm:inline-block px-5 py-2 text-sm font-semibold rounded-full text-white bg-white/5 border border-white/10 hover:bg-gradient-to-r hover:from-violet-500 hover:to-cyan-500 hover:border-transparent hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] hover:-translate-y-0.5 transition-all duration-300"
           >
             Hire Me
           </a>
           
           <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={() => {
+              audioSystem.playClick();
+              setIsMenuOpen(!isMenuOpen);
+            }}
+            onMouseEnter={() => audioSystem.playHover()}
             className="md:hidden p-2 rounded-full text-white hover:bg-white/5 transition-colors"
             aria-label="Toggle Navigation Menu"
           >
@@ -109,7 +144,8 @@ const Navbar = () => {
             <li key={link.name}>
               <a
                 href={link.href}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={handleLinkClick}
+                onMouseEnter={() => audioSystem.playHover()}
                 className={`block text-lg font-medium transition-colors hover:text-white ${
                   activeSection === link.id ? 'text-white' : 'text-slate-400'
                 }`}
@@ -121,7 +157,8 @@ const Navbar = () => {
         </ul>
         <a
           href="#contact"
-          onClick={() => setIsMenuOpen(false)}
+          onClick={handleLinkClick}
+          onMouseEnter={() => audioSystem.playHover()}
           className="w-full text-center px-5 py-3 text-sm font-semibold rounded-full text-white bg-gradient-to-r from-violet-500 to-cyan-500"
         >
           Hire Me

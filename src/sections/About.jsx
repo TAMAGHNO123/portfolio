@@ -1,13 +1,36 @@
 import React from 'react';
 import { User, CheckCircle2, Code2, Layout, Server, Database, Cpu } from 'lucide-react';
+import { audioSystem } from '../utils/audioSystem';
 
 const About = () => {
   const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
-    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+    
+    // Set custom coordinates properties for spotlight border
+    card.style.setProperty('--mouse-x', `${x}px`);
+    card.style.setProperty('--mouse-y', `${y}px`);
+    
+    // Symmetrical 3D tilt
+    const w = rect.width;
+    const h = rect.height;
+    const rotateY = ((x - w / 2) / (w / 2)) * 12; // max 12 deg
+    const rotateX = -((y - h / 2) / (h / 2)) * 12;
+    
+    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
+    card.style.transition = 'transform 0.08s ease-out'; // snappy follow
+  };
+
+  const handleMouseLeave = (e) => {
+    const card = e.currentTarget;
+    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)';
+    card.style.transition = 'transform 0.4s ease-out'; // smooth recovery
+  };
+
+  const handlePillHover = () => {
+    audioSystem.playHover();
   };
 
   const coreAttributes = [
@@ -21,27 +44,32 @@ const About = () => {
     {
       title: 'Languages',
       icon: <Code2 size={20} className="text-violet-500" />,
-      skills: ['JavaScript', 'C++', 'SQL']
+      skills: ['JavaScript', 'C++', 'SQL'],
+      gridSpan: 'sm:col-span-1'
     },
     {
       title: 'Frontend',
       icon: <Layout size={20} className="text-violet-500" />,
-      skills: ['React (Vite)', 'Next.js', 'Tailwind CSS']
+      skills: ['React (Vite)', 'Next.js', 'Tailwind CSS'],
+      gridSpan: 'sm:col-span-1'
     },
     {
       title: 'Backend & APIs',
       icon: <Server size={20} className="text-violet-500" />,
-      skills: ['Node.js', 'Express.js', 'REST APIs']
+      skills: ['Node.js', 'Express.js', 'REST APIs'],
+      gridSpan: 'sm:col-span-2' // wide bento block
     },
     {
       title: 'Databases & Services',
       icon: <Database size={20} className="text-violet-500" />,
-      skills: ['MongoDB', 'PostgreSQL', 'Firestore', 'Supabase']
+      skills: ['MongoDB', 'PostgreSQL', 'Firestore', 'Supabase'],
+      gridSpan: 'sm:col-span-1'
     },
     {
       title: 'Tools & Cloud',
       icon: <Cpu size={20} className="text-violet-500" />,
-      skills: ['Git', 'GitHub', 'Firebase', 'Google Cloud Platform']
+      skills: ['Git', 'GitHub', 'Firebase', 'Google Cloud Platform'],
+      gridSpan: 'sm:col-span-1'
     }
   ];
 
@@ -63,7 +91,10 @@ const About = () => {
           {/* Intro Card */}
           <div
             onMouseMove={handleMouseMove}
-            className="glass-card group relative lg:col-span-5 p-8 sm:p-10 rounded-3xl flex flex-col gap-6"
+            onMouseLeave={handleMouseLeave}
+            onMouseEnter={() => audioSystem.playHover()}
+            onClick={() => audioSystem.playClick()}
+            className="glass-card group relative lg:col-span-5 p-8 sm:p-10 rounded-3xl flex flex-col gap-6 h-fit cursor-default"
           >
             <div className="card-glow"></div>
             
@@ -87,7 +118,11 @@ const About = () => {
               <h4 className="text-white font-semibold mb-4 text-sm sm:text-base">Core Attributes</h4>
               <ul className="flex flex-col gap-3">
                 {coreAttributes.map((attr) => (
-                  <li key={attr} className="flex items-center gap-3 text-slate-400 text-sm sm:text-base">
+                  <li 
+                    key={attr} 
+                    onMouseEnter={handlePillHover}
+                    className="flex items-center gap-3 text-slate-400 text-sm sm:text-base"
+                  >
                     <CheckCircle2 size={18} className="text-cyan-500 flex-shrink-0" />
                     {attr}
                   </li>
@@ -102,12 +137,16 @@ const About = () => {
               Technical Arsenal
             </h3>
 
+            {/* Bento Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {skillGroups.map((group) => (
                 <div
                   key={group.title}
                   onMouseMove={handleMouseMove}
-                  className="glass-card group relative p-6 rounded-2xl flex flex-col gap-4"
+                  onMouseLeave={handleMouseLeave}
+                  onMouseEnter={() => audioSystem.playHover()}
+                  onClick={() => audioSystem.playClick()}
+                  className={`glass-card group relative p-6 rounded-2xl flex flex-col gap-4 cursor-default ${group.gridSpan}`}
                 >
                   <div className="card-glow"></div>
 
@@ -120,6 +159,7 @@ const About = () => {
                     {group.skills.map((skill) => (
                       <span
                         key={skill}
+                        onMouseEnter={handlePillHover}
                         className="px-3.5 py-1.5 rounded-full text-xs font-semibold text-slate-400 border border-white/5 bg-white/2 hover:bg-violet-500/15 hover:border-violet-500/40 hover:text-white hover:-translate-y-0.5 transition-all duration-300 cursor-default"
                       >
                         {skill}
